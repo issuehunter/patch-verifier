@@ -1,15 +1,15 @@
 package patchverifier
 
 import (
-    "encoding/json"
-    "fmt"
-    "log"
+	"encoding/json"
+	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-    "github.com/issuehunter/ethrpc"
+	"github.com/issuehunter/ethrpc"
 )
 
 func _CreateFilter(ethRpcClient *ethrpc.EthRPC, contractAddress string, filter map[string]interface{}) string {
@@ -39,7 +39,6 @@ func GetEvents(ethRpcClient *ethrpc.EthRPC, filterID string) []interface{} {
 	return logs
 }
 
-
 func UninstallFilter(ethRpcClient *ethrpc.EthRPC, filterID string) bool {
 	log.Printf("uninstalling filter %v", filterID)
 	uninstall, err := ethRpcClient.EthUninstallFilter(filterID)
@@ -60,7 +59,7 @@ func CreateResolutionProposedFilter(ethRpcClient *ethrpc.EthRPC, contractAddress
 	// "0x3b2c9742ac31922699b361e5e2c3d23b7762a77db8d2ae4b5d8004c904e9a4b7"
 	var filter = map[string]interface{}{
 		"address": contractAddress,
-		"topics": []interface{}{"0x3b2c9742ac31922699b361e5e2c3d23b7762a77db8d2ae4b5d8004c904e9a4b7"},
+		"topics":  []interface{}{"0x3b2c9742ac31922699b361e5e2c3d23b7762a77db8d2ae4b5d8004c904e9a4b7"},
 	}
 	filterID := _CreateFilter(ethRpcClient, contractAddress, filter)
 	log.Printf("new event filter for the IssueHunter contract deployed at address %v: %v", contractAddress, filterID)
@@ -73,7 +72,7 @@ func InteractiveLogObserver(url string, contractAddress string) {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
-		<- c
+		<-c
 		fmt.Println("quitting...")
 		UninstallFilter(rpcClient, filterID)
 		os.Exit(1)
@@ -90,7 +89,7 @@ func InteractiveResolutionProposedLogObserver(url string, contractAddress string
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
-		<- c
+		<-c
 		fmt.Println("quitting...")
 		UninstallFilter(rpcClient, filterID)
 		os.Exit(1)
