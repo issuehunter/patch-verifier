@@ -75,7 +75,7 @@ func InteractiveLogObserver(url string, contractAddress string) {
 		<-c
 		fmt.Println("quitting...")
 		UninstallFilter(rpcClient, filterID)
-		os.Exit(1)
+		os.Exit(0)
 	}()
 	for {
 		GetEvents(rpcClient, filterID)
@@ -92,7 +92,7 @@ func InteractiveResolutionProposedLogObserver(url string, contractAddress string
 		<-c
 		fmt.Println("quitting...")
 		UninstallFilter(rpcClient, filterID)
-		os.Exit(1)
+		os.Exit(0)
 	}()
 	for {
 		GetEvents(rpcClient, filterID)
