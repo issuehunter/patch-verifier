@@ -16,25 +16,29 @@ First of all start a node locally. In the following example we are connecting to
 
 ### Live logging of all transactions involving the issuehunter contract
 
-    package main
-      
-    import (
-        "github.com/issuehunter/patch-verifier"
-    )
-    
-    func main() {
-        patchverifier.InteractiveLogObserver("http://127.0.0.1:8545", "CONTRACT_ADDRESS_HERE")
-    }
+```go
+package main
+
+import (
+    "github.com/issuehunter/patch-verifier"
+)
+
+func main() {
+    patchverifier.InteractiveLogObserver("http://127.0.0.1:8545", "CONTRACT_ADDRESS_HERE")
+}
+```
 
 
 ### Live logging of all ProposedResultion events on the issuehunter contract
 
-    package main
-      
-    import (
-        "github.com/issuehunter/patch-verifier"
-    )
-    
-    func main() {
-        patchverifier.InteractiveResolutionProposedLogObserver("http://127.0.0.1:8545", "CONTRACT_ADDRESS_HERE")
-    }
+```go
+package main
+
+import (
+    "github.com/issuehunter/patch-verifier"
+)
+
+func main() {
+    patchverifier.InteractiveResolutionProposedLogObserver("http://127.0.0.1:8545", "CONTRACT_ADDRESS_HERE")
+}
+```
