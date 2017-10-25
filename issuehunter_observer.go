@@ -12,7 +12,7 @@ import (
 	"github.com/issuehunter/ethrpc"
 )
 
-func createFilter(ethRpcClient *ethrpc.EthRPC, contractAddress string, filter map[string]interface{}) string {
+func createFilter(ethRpcClient *ethrpc.EthRPC, filter ethrpc.FilterParams) string {
 	filterID, err := ethRpcClient.EthNewFilter(filter)
 	if err != nil {
 		log.Fatal(err)
@@ -20,15 +20,15 @@ func createFilter(ethRpcClient *ethrpc.EthRPC, contractAddress string, filter ma
 	return filterID
 }
 
-func CreateFilter(ethRpcClient *ethrpc.EthRPC, contractAddress string) string {
+func CreateFilter(ethRpcClient *ethrpc.EthRPC, contractAddress []string) string {
 	log.Printf("creating a new event filter for the IssueHunter contract deployed at address %v", contractAddress)
-	var filter = map[string]interface{}{"address": contractAddress}
-	filterID := createFilter(ethRpcClient, contractAddress, filter)
+	var filter = ethrpc.FilterParams{Address: contractAddress}
+	filterID := createFilter(ethRpcClient, filter)
 	log.Printf("new event filter for the IssueHunter contract deployed at address %v: %v", contractAddress, filterID)
 	return filterID
 }
 
-func GetEvents(ethRpcClient *ethrpc.EthRPC, filterID string) []interface{} {
+func GetEvents(ethRpcClient *ethrpc.EthRPC, filterID string) []ethrpc.Log {
 	log.Printf("getting changes for filter %v", filterID)
 	logs, err := ethRpcClient.EthGetFilterChanges(filterID)
 	if err != nil {
@@ -53,20 +53,22 @@ func UninstallFilter(ethRpcClient *ethrpc.EthRPC, filterID string) bool {
 	return uninstall
 }
 
-func CreateResolutionProposedFilter(ethRpcClient *ethrpc.EthRPC, contractAddress string) string {
+func CreateResolutionProposedFilter(ethRpcClient *ethrpc.EthRPC, contractAddress []string) string {
 	log.Printf("creating a new filter on ResolutionProposed event for the IssueHunter contract deployed at address %v", contractAddress)
 	// > web3.sha3('ResolutionProposed(bytes32,address,bytes32)')
 	// "0x3b2c9742ac31922699b361e5e2c3d23b7762a77db8d2ae4b5d8004c904e9a4b7"
-	var filter = map[string]interface{}{
-		"address": contractAddress,
-		"topics":  []interface{}{"0x3b2c9742ac31922699b361e5e2c3d23b7762a77db8d2ae4b5d8004c904e9a4b7"},
+	var filter = ethrpc.FilterParams{
+		Address: contractAddress,
+		Topics: [][]string{
+			[]string{"0x3b2c9742ac31922699b361e5e2c3d23b7762a77db8d2ae4b5d8004c904e9a4b7"},
+		},
 	}
-	filterID := createFilter(ethRpcClient, contractAddress, filter)
+	filterID := createFilter(ethRpcClient, filter)
 	log.Printf("new event filter for the IssueHunter contract deployed at address %v: %v", contractAddress, filterID)
 	return filterID
 }
 
-func InteractiveLogObserver(url string, contractAddress string) {
+func InteractiveLogObserver(url string, contractAddress []string) {
 	rpcClient := ethrpc.NewEthRPC(url)
 	filterID := CreateFilter(rpcClient, contractAddress)
 	c := make(chan os.Signal, 1)
@@ -83,7 +85,7 @@ func InteractiveLogObserver(url string, contractAddress string) {
 	}
 }
 
-func InteractiveResolutionProposedLogObserver(url string, contractAddress string) {
+func InteractiveResolutionProposedLogObserver(url string, contractAddress []string) {
 	rpcClient := ethrpc.NewEthRPC(url)
 	filterID := CreateResolutionProposedFilter(rpcClient, contractAddress)
 	c := make(chan os.Signal, 1)
